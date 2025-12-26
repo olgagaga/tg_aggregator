@@ -170,26 +170,28 @@ frontend/
 - [x] Implement feed switching functionality
 - [x] Add FeedList component for managing feeds in Settings
 
-### Phase 5: Search & Bookmarks (PARTIALLY COMPLETED)
-- [ ] Implement SearchBar component
-- [ ] Create search results view
-- [ ] Implement search highlighting
+### Phase 5: Search & Bookmarks ✅ COMPLETED
+- [x] Implement SearchBar component
+- [x] Create search results view
+- [x] Implement search with debouncing (300ms)
 - [x] Create BookmarksPage
 - [x] Add bookmark toggle functionality
 - [x] Persist bookmarks to backend
+- [x] Implement optimistic updates for bookmarks
 
 ### Phase 6: Polish & UX (PARTIALLY COMPLETED)
 - [x] Mobile responsive design (basic)
 - [x] Add loading states and error handling
-- [ ] Implement optimistic updates for tags/bookmarks
+- [x] Implement optimistic updates for bookmarks
 - [x] Add empty states (no posts, no results, etc.)
 - [x] Add toast notifications for actions
 - [ ] Implement pull-to-refresh on mobile
 - [ ] Add keyboard shortcuts for power users
 - [ ] Performance optimization (virtualization if needed)
 
-### Phase 7: Settings & Configuration
-- [ ] Settings page UI
+### Phase 7: Settings & Configuration (PARTIALLY COMPLETED)
+- [x] Settings page UI
+- [x] Feed Management section
 - [ ] Theme toggle (if implemented)
 - [ ] Display preferences (post density, etc.)
 - [ ] Channel management view (which channels are tracked)
