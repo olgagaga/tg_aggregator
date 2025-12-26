@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, ExternalLink } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Bookmark, ExternalLink, Edit } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import type { Post } from '@/types';
+import type { Post, Tag } from '@/types';
 import TagBadge from '@/components/tags/TagBadge';
+import TagEditor from '@/components/tags/TagEditor';
 import { useToggleBookmark } from '@/hooks/useBookmarks';
+import { useUpdatePostTags, useTags } from '@/hooks/useTags';
 import { cn } from '@/lib/utils';
 
 interface PostCardProps {
@@ -15,7 +18,10 @@ interface PostCardProps {
 
 export default function PostCard({ post, onTagClick }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditingTags, setIsEditingTags] = useState(false);
   const { addBookmark, removeBookmark, isLoading } = useToggleBookmark();
+  const { updateTags, isLoading: isUpdatingTags } = useUpdatePostTags(post.id);
+  const { data: allTags = [] } = useTags();
 
   const shouldTruncate = post.content.length > 300;
   const displayContent = isExpanded || !shouldTruncate
@@ -29,6 +35,14 @@ export default function PostCard({ post, onTagClick }: PostCardProps) {
       addBookmark(post.id);
     }
   };
+
+  const handleSaveTags = (tags: Tag[]) => {
+    updateTags(tags);
+    setIsEditingTags(false);
+  };
+
+  // Get tag suggestions from all available tags
+  const tagSuggestions = allTags.map(t => t.name);
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -108,17 +122,48 @@ export default function PostCard({ post, onTagClick }: PostCardProps) {
         )}
 
         {/* Tags */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {post.tags.map((tag, index) => (
-              <TagBadge
-                key={`${tag.name}-${index}`}
-                tag={tag}
-                onClick={() => onTagClick?.(tag.name)}
-              />
-            ))}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            {post.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5 flex-1">
+                {post.tags.map((tag, index) => (
+                  <TagBadge
+                    key={`${tag.name}-${index}`}
+                    tag={tag}
+                    onClick={() => onTagClick?.(tag.name)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground">No tags</span>
+            )}
+
+            <Dialog open={isEditingTags} onOpenChange={setIsEditingTags}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                >
+                  <Edit className="h-3 w-3 mr-1" />
+                  Edit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Edit Tags</DialogTitle>
+                </DialogHeader>
+                <TagEditor
+                  currentTags={post.tags}
+                  onSave={handleSaveTags}
+                  isLoading={isUpdatingTags}
+                  suggestions={tagSuggestions}
+                  allTags={allTags}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
-        )}
+        </div>
 
         {/* Timestamp */}
         <p className="text-xs text-muted-foreground">

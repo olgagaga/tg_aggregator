@@ -140,25 +140,24 @@ frontend/
 
 ### Phase 2: Core Post Display ✅ COMPLETED
 - [x] Implement PostCard component
-  - Channel name/avatar
+  - Channel name
   - Post content (with truncation for long posts)
   - Media display (images)
   - Tags display with color coding (LLM vs human)
   - Timestamp
   - Link to original Telegram post
   - Bookmark button
-- [x] Implement PostList with infinite scroll
 - [x] Create PostSkeleton loading state
 - [x] Add "Read more" expansion for long posts
 - [x] Implement React Query hooks (usePosts, useBookmarks)
 - [x] Update HomePage and BookmarksPage with real data
 
-### Phase 3: Tag System (PARTIALLY COMPLETED)
+### Phase 3: Tag System ✅ COMPLETED
 - [x] Create TagBadge component (with LLM/human color differentiation)
 - [x] Integrate tag filtering with post list (click to filter)
-- [ ] Implement TagEditor (add/remove tags on posts)
-- [ ] Create TagFilter component
-- [ ] Show tag suggestions from existing tags
+- [x] Implement TagEditor (add/remove tags on posts)
+- [x] Create TagFilter component
+- [x] Show tag suggestions from existing tags
 
 ### Phase 4: Feed Management
 - [ ] Implement FeedSelector dropdown

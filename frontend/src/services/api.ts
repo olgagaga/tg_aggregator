@@ -16,7 +16,7 @@ const mockPosts: Post[] = [
     id: '1',
     channel_name: 'ML Research Daily',
     channel_username: 'mlresearch',
-    content: 'New paper: "Attention is All You Need v2" - Researchers propose improvements to the transformer architecture with 30% better efficiency. Key insights: sparse attention patterns and adaptive computation time. Full paper: arxiv.org/...',
+    content: 'New paper: "Attention is All You Need v2" - Researchers propose improvements to the transformer architecture with 30% better efficiency. Key insights: sparse attention patterns and adaptive computation time. The paper introduces a novel approach to reduce computational complexity while maintaining model performance. They achieve this through dynamic attention head selection and learned sparsity patterns that adapt to input complexity. Experiments on WMT translation tasks show consistent improvements across multiple language pairs. The model also demonstrates better few-shot learning capabilities and requires 40% less memory during training. This could be a game-changer for training large-scale models on limited hardware. Full implementation code and pretrained models are available on GitHub. The authors also provide extensive ablation studies showing which components contribute most to the performance gains.',
     media_urls: [],
     original_url: 'https://t.me/mlresearch/1234',
     published_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
@@ -145,24 +145,23 @@ export const postsApi = {
     return response.data;
   },
 
-  updateTags: async (postId: string, tags: string[]): Promise<Post> => {
+  updateTags: async (postId: string, tags: Tag[]): Promise<Post> => {
     if (MOCK_DATA_ENABLED) {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const post = mockPosts.find((p) => p.id === postId);
       if (!post) throw new Error('Post not found');
 
-      post.tags = tags.map((name) => ({
-        name,
-        author_type: 'human' as const,
-        created_at: new Date().toISOString(),
-      }));
+      // Use the provided tags with their author_type preserved
+      post.tags = tags;
 
       return post;
     }
 
     const response = await api.patch<Post>(`/posts/${postId}/tags`, {
-      tags,
-      author_type: 'human',
+      tags: tags.map(t => ({
+        name: t.name,
+        author_type: t.author_type,
+      })),
     });
     return response.data;
   },
