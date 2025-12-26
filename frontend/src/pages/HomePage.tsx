@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { useFeedContext } from '@/context/FeedContext';
 import PostList from '@/components/posts/PostList';
 import TagFilter from '@/components/tags/TagFilter';
 import FeedSelector from '@/components/feeds/FeedSelector';
 import FeedEditor from '@/components/feeds/FeedEditor';
 import SearchBar from '@/components/search/SearchBar';
+import PullToRefresh from '@/components/ui/PullToRefresh';
+import KeyboardShortcutsDialog from '@/components/ui/KeyboardShortcutsDialog';
 import { useFeeds } from '@/hooks/useFeeds';
 import { useSearch } from '@/hooks/useSearch';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Filter, Settings, X } from 'lucide-react';
@@ -15,11 +20,15 @@ import PostSkeleton from '@/components/posts/PostSkeleton';
 
 export default function HomePage() {
   console.log('[DEBUG] HomePage: Rendering HomePage');
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { currentFeedId, selectedTags, setSelectedTags } = useFeedContext();
   const { data: feeds = [] } = useFeeds();
   const [isCreatingFeed, setIsCreatingFeed] = useState(false);
   const [isEditingFeed, setIsEditingFeed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   console.log('[DEBUG] HomePage: selectedTags =', selectedTags);
   console.log('[DEBUG] HomePage: currentFeedId =', currentFeedId);
@@ -32,6 +41,58 @@ export default function HomePage() {
     searchQuery.length > 0
   );
   const isSearchMode = searchQuery.length > 0;
+
+  // Pull to refresh handler
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['posts'] });
+    await queryClient.invalidateQueries({ queryKey: ['tags'] });
+    if (isSearchMode) {
+      await queryClient.invalidateQueries({ queryKey: ['search'] });
+    }
+  };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: '/',
+      handler: () => {
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        searchInput?.focus();
+      },
+      description: 'Focus search',
+    },
+    {
+      key: 'n',
+      handler: () => setIsCreatingFeed(true),
+      description: 'Create new feed',
+    },
+    {
+      key: 'b',
+      handler: () => navigate('/bookmarks'),
+      description: 'Go to bookmarks',
+    },
+    {
+      key: ',',
+      handler: () => navigate('/settings'),
+      description: 'Go to settings',
+    },
+    {
+      key: 'h',
+      handler: () => navigate('/'),
+      description: 'Go to home',
+    },
+    {
+      key: 'r',
+      handler: handleRefresh,
+      description: 'Refresh posts',
+    },
+    {
+      key: '?',
+      shift: true,
+      handler: () => setShowShortcuts(true),
+      description: 'Show keyboard shortcuts',
+    },
+  ]);
 
   const handleTagToggle = (tagName: string) => {
     console.log('[DEBUG] HomePage: handleTagToggle', tagName);
@@ -59,15 +120,16 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-3xl">
-      <div className="mb-6 space-y-4">
-        {/* Search Bar */}
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          isLoading={isSearching}
-          placeholder="Search posts by content or channel..."
-        />
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="container mx-auto px-4 py-6 max-w-3xl">
+        <div className="mb-6 space-y-4">
+          {/* Search Bar */}
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            isLoading={isSearching}
+            placeholder="Search posts by content or channel..."
+          />
 
         {/* Search Results Header */}
         {isSearchMode && (
@@ -214,19 +276,26 @@ export default function HomePage() {
         <PostList tags={activeTags} onTagClick={handleTagToggle} />
       )}
 
-      {/* Feed Editor Modals */}
-      <FeedEditor
-        open={isCreatingFeed}
-        onOpenChange={setIsCreatingFeed}
-        onSuccess={() => setIsCreatingFeed(false)}
-      />
+        {/* Feed Editor Modals */}
+        <FeedEditor
+          open={isCreatingFeed}
+          onOpenChange={setIsCreatingFeed}
+          onSuccess={() => setIsCreatingFeed(false)}
+        />
 
-      <FeedEditor
-        feed={currentFeed}
-        open={isEditingFeed}
-        onOpenChange={setIsEditingFeed}
-        onSuccess={() => setIsEditingFeed(false)}
-      />
-    </div>
+        <FeedEditor
+          feed={currentFeed}
+          open={isEditingFeed}
+          onOpenChange={setIsEditingFeed}
+          onSuccess={() => setIsEditingFeed(false)}
+        />
+
+        {/* Keyboard Shortcuts Help */}
+        <KeyboardShortcutsDialog
+          open={showShortcuts}
+          onOpenChange={setShowShortcuts}
+        />
+      </div>
+    </PullToRefresh>
   );
 }

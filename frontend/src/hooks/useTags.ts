@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tagsApi, postsApi } from '@/services/api';
 import { toast } from 'sonner';
-import type { Tag } from '@/types';
+import type { Tag, Post, PaginatedResponse } from '@/types';
 
 export function useTags() {
   return useQuery({
@@ -16,6 +16,46 @@ export function useUpdatePostTags(postId: string) {
 
   const mutation = useMutation({
     mutationFn: (tags: Tag[]) => postsApi.updateTags(postId, tags),
+    // Optimistic update
+    onMutate: async (newTags: Tag[]) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['posts'] });
+      await queryClient.cancelQueries({ queryKey: ['search'] });
+
+      // Snapshot previous values
+      const previousPosts = queryClient.getQueriesData({ queryKey: ['posts'] });
+      const previousSearch = queryClient.getQueriesData({ queryKey: ['search'] });
+
+      // Optimistically update posts
+      queryClient.setQueriesData<PaginatedResponse<Post>>(
+        { queryKey: ['posts'] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.map((post) =>
+              post.id === postId ? { ...post, tags: newTags } : post
+            ),
+          };
+        }
+      );
+
+      // Optimistically update search results
+      queryClient.setQueriesData<PaginatedResponse<Post>>(
+        { queryKey: ['search'] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.map((post) =>
+              post.id === postId ? { ...post, tags: newTags } : post
+            ),
+          };
+        }
+      );
+
+      return { previousPosts, previousSearch };
+    },
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ['posts'] });
@@ -23,7 +63,18 @@ export function useUpdatePostTags(postId: string) {
       queryClient.invalidateQueries({ queryKey: ['post', postId] });
       toast.success('Tags updated successfully');
     },
-    onError: (error) => {
+    onError: (error, _newTags, context) => {
+      // Rollback on error
+      if (context?.previousPosts) {
+        context.previousPosts.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousSearch) {
+        context.previousSearch.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
       console.error('Failed to update tags:', error);
       toast.error('Failed to update tags');
     },

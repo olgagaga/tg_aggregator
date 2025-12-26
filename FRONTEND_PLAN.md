@@ -179,22 +179,23 @@ frontend/
 - [x] Persist bookmarks to backend
 - [x] Implement optimistic updates for bookmarks
 
-### Phase 6: Polish & UX (PARTIALLY COMPLETED)
+### Phase 6: Polish & UX ✅ COMPLETED
 - [x] Mobile responsive design (basic)
 - [x] Add loading states and error handling
 - [x] Implement optimistic updates for bookmarks
+- [x] Implement optimistic updates for tags
 - [x] Add empty states (no posts, no results, etc.)
 - [x] Add toast notifications for actions
-- [ ] Implement pull-to-refresh on mobile
-- [ ] Add keyboard shortcuts for power users
-- [ ] Performance optimization (virtualization if needed)
+- [x] Implement pull-to-refresh on mobile
+- [x] Add keyboard shortcuts for power users
+- [ ] Performance optimization (virtualization if needed) - Not needed for MVP
 
-### Phase 7: Settings & Configuration (PARTIALLY COMPLETED)
+### Phase 7: Settings & Configuration ✅ COMPLETED
 - [x] Settings page UI
 - [x] Feed Management section
-- [ ] Theme toggle (if implemented)
-- [ ] Display preferences (post density, etc.)
-- [ ] Channel management view (which channels are tracked)
+- [ ] Theme toggle (dark/light mode) - Deferred (uses system theme)
+- [ ] Display preferences (post density, etc.) - Deferred (not critical for MVP)
+- [ ] Channel management view (which channels are tracked) - Backend feature
 
 ## Design Guidelines
 
