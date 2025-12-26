@@ -159,15 +159,16 @@ frontend/
 - [x] Create TagFilter component
 - [x] Show tag suggestions from existing tags
 
-### Phase 4: Feed Management
-- [ ] Implement FeedSelector dropdown
-- [ ] Create "All Posts" default feed
-- [ ] Implement FeedEditor modal/drawer
+### Phase 4: Feed Management ✅ COMPLETED
+- [x] Implement FeedSelector dropdown
+- [x] Create "All Posts" default feed
+- [x] Implement FeedEditor modal/drawer
   - Create new feed
   - Edit feed name and tag filters
   - Delete feed
-- [ ] Add feed persistence (save to backend)
-- [ ] Implement feed switching functionality
+- [x] Add feed persistence (save to backend)
+- [x] Implement feed switching functionality
+- [x] Add FeedList component for managing feeds in Settings
 
 ### Phase 5: Search & Bookmarks (PARTIALLY COMPLETED)
 - [ ] Implement SearchBar component
