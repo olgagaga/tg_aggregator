@@ -93,11 +93,17 @@ export const postsApi = {
     tags?: string[];
     search?: string;
   }): Promise<PaginatedResponse<Post>> => {
+    console.log('[DEBUG] postsApi.getPosts: Called with params', params);
+    console.log('[DEBUG] postsApi.getPosts: MOCK_DATA_ENABLED =', MOCK_DATA_ENABLED);
+
     if (MOCK_DATA_ENABLED) {
+      console.log('[DEBUG] postsApi.getPosts: Using mock data');
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const { limit = 20, offset = 0, tags = [] } = params;
+      console.log('[DEBUG] postsApi.getPosts: Processing with', { limit, offset, tags });
 
       let filtered = [...mockPosts];
+      console.log('[DEBUG] postsApi.getPosts: Total mock posts =', mockPosts.length);
 
       if (tags.length > 0) {
         filtered = filtered.filter((post) =>
@@ -106,15 +112,24 @@ export const postsApi = {
       }
 
       const paginatedPosts = filtered.slice(offset, offset + limit);
+      console.log('[DEBUG] postsApi.getPosts: Returning', {
+        data_length: paginatedPosts.length,
+        total: filtered.length,
+        has_more: offset + limit < filtered.length
+      });
 
-      return {
+      const result = {
         data: paginatedPosts,
         total: filtered.length,
         has_more: offset + limit < filtered.length,
       };
+      console.log('[DEBUG] postsApi.getPosts: Result =', result);
+      return result;
     }
 
+    console.log('[DEBUG] postsApi.getPosts: Making real API call');
     const response = await api.get<PaginatedResponse<Post>>('/posts', { params });
+    console.log('[DEBUG] postsApi.getPosts: API response =', response.data);
     return response.data;
   },
 

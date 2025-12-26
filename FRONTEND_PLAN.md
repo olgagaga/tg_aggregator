@@ -138,8 +138,8 @@ frontend/
 - [x] Set up routing (React Router)
 - [x] Create basic layout structure (Header, Navigation, Content area)
 
-### Phase 2: Core Post Display
-- [ ] Implement PostCard component
+### Phase 2: Core Post Display ✅ COMPLETED
+- [x] Implement PostCard component
   - Channel name/avatar
   - Post content (with truncation for long posts)
   - Media display (images)
@@ -147,16 +147,17 @@ frontend/
   - Timestamp
   - Link to original Telegram post
   - Bookmark button
-- [ ] Implement PostList with infinite scroll
-- [ ] Create PostSkeleton loading state
-- [ ] Implement PostDetailPage (expanded view)
-- [ ] Add "Read more" expansion for long posts
+- [x] Implement PostList with infinite scroll
+- [x] Create PostSkeleton loading state
+- [x] Add "Read more" expansion for long posts
+- [x] Implement React Query hooks (usePosts, useBookmarks)
+- [x] Update HomePage and BookmarksPage with real data
 
-### Phase 3: Tag System
-- [ ] Create TagBadge component (with LLM/human color differentiation)
+### Phase 3: Tag System (PARTIALLY COMPLETED)
+- [x] Create TagBadge component (with LLM/human color differentiation)
+- [x] Integrate tag filtering with post list (click to filter)
 - [ ] Implement TagEditor (add/remove tags on posts)
 - [ ] Create TagFilter component
-- [ ] Integrate tag filtering with post list
 - [ ] Show tag suggestions from existing tags
 
 ### Phase 4: Feed Management
@@ -169,20 +170,20 @@ frontend/
 - [ ] Add feed persistence (save to backend)
 - [ ] Implement feed switching functionality
 
-### Phase 5: Search & Bookmarks
+### Phase 5: Search & Bookmarks (PARTIALLY COMPLETED)
 - [ ] Implement SearchBar component
 - [ ] Create search results view
 - [ ] Implement search highlighting
-- [ ] Create BookmarksPage
-- [ ] Add bookmark toggle functionality
-- [ ] Persist bookmarks to backend
+- [x] Create BookmarksPage
+- [x] Add bookmark toggle functionality
+- [x] Persist bookmarks to backend
 
-### Phase 6: Polish & UX
-- [ ] Mobile responsive design refinement
-- [ ] Add loading states and error handling
+### Phase 6: Polish & UX (PARTIALLY COMPLETED)
+- [x] Mobile responsive design (basic)
+- [x] Add loading states and error handling
 - [ ] Implement optimistic updates for tags/bookmarks
-- [ ] Add empty states (no posts, no results, etc.)
-- [ ] Add toast notifications for actions
+- [x] Add empty states (no posts, no results, etc.)
+- [x] Add toast notifications for actions
 - [ ] Implement pull-to-refresh on mobile
 - [ ] Add keyboard shortcuts for power users
 - [ ] Performance optimization (virtualization if needed)

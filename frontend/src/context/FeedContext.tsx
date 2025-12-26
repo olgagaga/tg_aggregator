@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 interface FeedContextType {
   currentFeedId: string;
@@ -10,18 +11,25 @@ interface FeedContextType {
 const FeedContext = createContext<FeedContextType | undefined>(undefined);
 
 export function FeedProvider({ children }: { children: ReactNode }) {
+  console.log('[DEBUG] FeedContext: FeedProvider rendering');
   const [currentFeedId, setCurrentFeedId] = useState<string>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  return (
-    <FeedContext.Provider
-      value={{
+  const value = useMemo(
+    () => {
+      console.log('[DEBUG] FeedContext: Creating context value', { currentFeedId, selectedTags });
+      return {
         currentFeedId,
         setCurrentFeedId,
         selectedTags,
         setSelectedTags,
-      }}
-    >
+      };
+    },
+    [currentFeedId, selectedTags]
+  );
+
+  return (
+    <FeedContext.Provider value={value}>
       {children}
     </FeedContext.Provider>
   );
