@@ -22,8 +22,7 @@ settings = get_settings()
 config.set_main_option("sqlalchemy.url", settings.database_url_async)
 
 # Import all models here so Alembic can detect them
-# This will be populated in Phase 2
-# from app.models import Post, Tag, Feed, Bookmark  # Uncomment when models exist
+from app.models import Post, Tag, Feed, Bookmark, PostTag  # noqa: F401
 
 target_metadata = SQLModel.metadata
 

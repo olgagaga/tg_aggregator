@@ -5,6 +5,9 @@ from typing import TYPE_CHECKING
 from sqlalchemy import JSON, Text
 from sqlmodel import Column, Field, Relationship, SQLModel
 
+# Import PostTag for link_model (needed at runtime)
+from app.models.post_tag import PostTag
+
 if TYPE_CHECKING:
     from app.models.tag import Tag
     from app.models.bookmark import Bookmark
@@ -31,7 +34,7 @@ class Post(SQLModel, table=True):
     # Relationships
     tags: list["Tag"] = Relationship(
         back_populates="posts",
-        link_model="PostTag",
+        link_model=PostTag,
         sa_relationship_kwargs={"lazy": "selectin"},
     )
     bookmarks: list["Bookmark"] = Relationship(back_populates="post")
