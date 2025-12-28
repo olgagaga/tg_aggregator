@@ -12,13 +12,16 @@ setup_logging()
 
 async def main():
     """Main function to scrape channels."""
-    if len(sys.argv) < 2:
-        print("Usage: python scripts/scrape_channels.py <channel_username> [limit]")
-        print("Example: python scripts/scrape_channels.py example_channel 50")
-        sys.exit(1)
+    # if len(sys.argv) < 2:
+    #     print("Usage: python scripts/scrape_channels.py <channel_username> [limit]")
+    #     print("Example: python scripts/scrape_channels.py example_channel 50")
+    #     sys.exit(1)
+    #
+    # channel_username = sys.argv[1]
+    # limit = int(sys.argv[2]) if len(sys.argv) > 2 else 100
 
-    channel_username = sys.argv[1]
-    limit = int(sys.argv[2]) if len(sys.argv) > 2 else 100
+    channel_username = "seeallochnaya"
+    limit = 2
 
     async with AsyncSessionLocal() as session:
         async with TelegramScraper() as scraper:

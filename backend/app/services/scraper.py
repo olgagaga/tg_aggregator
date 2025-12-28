@@ -116,8 +116,30 @@ class TelegramScraper:
                 channel_id=channel_entity.id,
             )
 
-            # Determine the starting point (latest_message_id + 1)
-            min_id = (channel.latest_message_id or 0) + 1 if channel.latest_message_id else 0
+            # Determine the starting point
+            if channel.latest_message_id is None:
+                # Freshly added channel - fetch the latest message ID from Telegram
+                logger.info(
+                    f"Channel @{channel_username} is new, fetching latest message ID..."
+                )
+                latest_message = await self.client.get_messages(
+                    channel_entity,
+                    limit=1,
+                )
+                if latest_message and len(latest_message) > 0:
+                    current_tg_last_message_id = latest_message[0].id
+                    min_id = max(0, current_tg_last_message_id - limit)
+                    logger.info(
+                        f"Found latest message ID {current_tg_last_message_id}, "
+                        f"starting from {min_id} (fetching last {limit} messages)"
+                    )
+                else:
+                    # No messages in channel
+                    logger.warning(f"Channel @{channel_username} has no messages")
+                    return 0, 0
+            else:
+                # Existing channel - start from latest_message_id + 1
+                min_id = channel.latest_message_id + 1
 
             logger.info(
                 f"Scraping channel @{channel_username}, starting from message ID {min_id}"
@@ -164,9 +186,17 @@ class TelegramScraper:
                 )
 
                 try:
-                    await PostService.create(session, post_data)
+                    created_post = await PostService.create(session, post_data)
                     new_posts += 1
                     logger.debug(f"Created post {post_id}")
+
+                    # Auto-tag with mock LLM (Phase 5)
+                    try:
+                        from app.services.mock_llm_tagger import MockLLMTagger
+
+                        await MockLLMTagger.tag_post(session, post_id)
+                    except Exception as e:
+                        logger.warning(f"Failed to auto-tag post {post_id}: {e}")
 
                     # Track the latest message ID
                     if latest_message_id is None or message.id > latest_message_id:

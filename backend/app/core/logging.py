@@ -1,4 +1,3 @@
-"""Structured logging configuration."""
 import logging
 import sys
 from typing import Any

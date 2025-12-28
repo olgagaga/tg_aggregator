@@ -11,7 +11,7 @@ class FeedSchema(BaseModel):
     id: int
     name: str
     tag_filters: List[str] = Field(default_factory=list)
-    created_at: datetime
+    created_at: datetime | None = None
 
     class Config:
         from_attributes = True

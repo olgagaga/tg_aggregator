@@ -5,6 +5,7 @@ from app.services.feed_service import FeedService
 from app.services.bookmark_service import BookmarkService
 from app.services.channel_service import ChannelService
 from app.services.scraper import TelegramScraper
+from app.services.mock_llm_tagger import MockLLMTagger
 
 __all__ = [
     "PostService",
@@ -13,5 +14,6 @@ __all__ = [
     "BookmarkService",
     "ChannelService",
     "TelegramScraper",
+    "MockLLMTagger",
 ]
 
