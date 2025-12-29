@@ -250,6 +250,28 @@ export const tagsApi = {
     const response = await api.get<{ tags: Array<{ name: string; count: number; source: 'llm' | 'human' }> }>('/tags');
     return response.data.tags;
   },
+
+  createTag: async (name: string): Promise<Tag> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      throw new Error('Mock mode: Tag creation not available');
+    }
+
+    const response = await api.post<Tag>('/tags', {
+      name,
+      author_type: 'human',
+    });
+    return response.data;
+  },
+
+  deleteTag: async (name: string): Promise<void> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      throw new Error('Mock mode: Tag deletion not available');
+    }
+
+    await api.delete(`/tags/${name}`);
+  },
 };
 
 export const searchApi = {

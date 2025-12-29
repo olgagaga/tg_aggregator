@@ -10,16 +10,11 @@ interface TagBadgeProps {
 }
 
 export default function TagBadge({ tag, onClick, onRemove, className }: TagBadgeProps) {
-  const isHuman = tag.author_type === 'human';
-
   return (
     <Badge
-      variant={isHuman ? 'default' : 'secondary'}
+      variant="secondary"
       className={cn(
-        'cursor-pointer transition-all',
-        isHuman
-          ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-100'
-          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300',
+        'cursor-pointer transition-all hover:bg-accent',
         onClick && 'hover:scale-105',
         className
       )}

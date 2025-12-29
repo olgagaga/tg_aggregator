@@ -91,7 +91,6 @@ export default function TagFilter({
       <div className="flex flex-wrap gap-1.5">
         {sortedTags.map((tag) => {
           const isSelected = selectedTags.includes(tag.name);
-          const isHumanTag = tag.source === 'human';
 
           return (
             <Badge
@@ -99,8 +98,7 @@ export default function TagFilter({
               variant={isSelected ? 'default' : 'outline'}
               className={cn(
                 'cursor-pointer transition-colors',
-                !isSelected && isHumanTag && 'border-amber-500/50 text-amber-700 hover:bg-amber-50',
-                !isSelected && !isHumanTag && 'hover:bg-accent'
+                !isSelected && 'hover:bg-accent'
               )}
               onClick={() => onTagToggle(tag.name)}
             >

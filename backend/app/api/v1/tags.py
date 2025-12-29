@@ -46,3 +46,21 @@ async def create_tag(
     tag = await TagService.create(session, tag_data)
     return TagSchema.model_validate(tag)
 
+
+@router.delete("/{tag_name}", status_code=204)
+async def delete_tag(
+    tag_name: str,
+    session: AsyncSession = Depends(get_session),
+) -> None:
+    """
+    Delete a tag by name.
+
+    This will remove the tag from all posts and delete it from the system.
+    """
+    tag = await TagService.get_by_name(session, tag_name)
+    if not tag:
+        raise HTTPException(status_code=404, detail="Tag not found")
+
+    await TagService.delete(session, tag.id)
+    return None
+

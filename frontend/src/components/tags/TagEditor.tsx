@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import type { Tag } from '@/types';
-import { cn } from '@/lib/utils';
 
 interface TagEditorProps {
   currentTags: Tag[];
@@ -100,10 +99,7 @@ export default function TagEditor({
           <Badge
             key={tag.name}
             variant="secondary"
-            className={cn(
-              'gap-1 pr-1',
-              tag.author_type === 'human' && 'border-amber-500/50 bg-amber-50 text-amber-700'
-            )}
+            className="gap-1 pr-1"
           >
             {tag.name}
             <button

@@ -11,6 +11,52 @@ export function useTags() {
   });
 }
 
+export function useCreateTag() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (name: string) => tagsApi.createTag(name),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      toast.success('Tag created successfully');
+    },
+    onError: (error) => {
+      console.error('Failed to create tag:', error);
+      toast.error('Failed to create tag');
+    },
+  });
+
+  return {
+    createTag: mutation.mutate,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
+}
+
+export function useDeleteTag() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (name: string) => tagsApi.deleteTag(name),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      toast.success('Tag deleted successfully');
+    },
+    onError: (error) => {
+      console.error('Failed to delete tag:', error);
+      toast.error('Failed to delete tag');
+    },
+  });
+
+  return {
+    deleteTag: mutation.mutate,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
+}
+
 export function useUpdatePostTags(postId: string) {
   const queryClient = useQueryClient();
 

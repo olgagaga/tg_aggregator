@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import FeedList from '@/components/feeds/FeedList';
 import ChannelList from '@/components/channels/ChannelList';
+import TagList from '@/components/tags/TagList';
 import KeyManagementDialog from '@/components/settings/KeyManagementDialog';
 import { Button } from '@/components/ui/button';
 import { Key } from 'lucide-react';
@@ -23,6 +24,12 @@ export default function SettingsPage() {
         <section>
           <h2 className="text-lg font-semibold mb-4">Channel Management</h2>
           <ChannelList />
+        </section>
+
+        {/* Tag Management Section */}
+        <section>
+          <h2 className="text-lg font-semibold mb-4">Tag Management</h2>
+          <TagList />
         </section>
 
         {/* Feed Management Section */}
