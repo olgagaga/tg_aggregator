@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger
 from app.db.session import get_session
 from app.services.scraper import TelegramScraper
+from app.services.scraper_orchestrator import ScraperOrchestrator
 
 router = APIRouter(prefix="/scrape", tags=["scrape"])
 logger = get_logger(__name__)
@@ -30,7 +31,8 @@ async def scrape_all_channels(
     """
     try:
         async with TelegramScraper() as scraper:
-            results = await scraper.scrape_all_channels(
+            orchestrator = ScraperOrchestrator(scraper)
+            results = await orchestrator.scrape_all_channels(
                 session,
                 limit_per_channel=limit_per_channel,
             )
@@ -79,7 +81,8 @@ async def scrape_channel(
     """
     try:
         async with TelegramScraper() as scraper:
-            new_posts, total_messages = await scraper.scrape_channel(
+            orchestrator = ScraperOrchestrator(scraper)
+            new_posts, total_messages = await orchestrator.scrape_channel(
                 session,
                 channel_username,
                 limit=limit,

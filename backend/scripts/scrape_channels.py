@@ -25,8 +25,9 @@ async def main():
 
     async with AsyncSessionLocal() as session:
         async with TelegramScraper() as scraper:
+            orchestrator = ScraperOrchestrator(scraper)
             print(f"Scraping channel: @{channel_username}")
-            new_posts, total = await scraper.scrape_channel(session, channel_username, limit=limit)
+            new_posts, total = await orchestrator.scrape_channel(session, channel_username, limit=limit)
             print(f"Results: {new_posts} new posts from {total} messages")
 
 

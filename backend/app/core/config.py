@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # When a channel is first added, we set latest_message_id to
     # (current_last_message_id - telegram_initial_history_limit), so that the
     # scraper will fetch only this window of historical messages on first run.
-    telegram_initial_history_limit: int = 200
+    telegram_initial_history_limit: int = 5
 
     # Server Configuration
     host: str = "0.0.0.0"

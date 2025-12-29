@@ -13,8 +13,9 @@ async def main():
     """Main function to scrape all active channels."""
     async with AsyncSessionLocal() as session:
         async with TelegramScraper() as scraper:
+            orchestrator = ScraperOrchestrator(scraper)
             print("Scraping all active channels...")
-            results = await scraper.scrape_all_channels(session, limit_per_channel=100)
+            results = await orchestrator.scrape_all_channels(session, limit_per_channel=100)
 
             print("\nResults:")
             total_new = 0
