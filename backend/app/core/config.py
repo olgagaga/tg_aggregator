@@ -1,10 +1,11 @@
 from functools import lru_cache
-from typing import Literal
 from pathlib import Path
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parents[2]
+
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
@@ -33,6 +34,13 @@ class Settings(BaseSettings):
     environment: Literal["development", "staging", "production"] = "development"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     api_v1_prefix: str = "/api/v1"
+
+    # Scraper Settings
+    # How many recent messages to initially include when adding a new channel.
+    # When a channel is first added, we set latest_message_id to
+    # (current_last_message_id - telegram_initial_history_limit), so that the
+    # scraper will fetch only this window of historical messages on first run.
+    telegram_initial_history_limit: int = 200
 
     # Server Configuration
     host: str = "0.0.0.0"

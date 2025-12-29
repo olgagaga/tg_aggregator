@@ -60,6 +60,14 @@ class ChannelService:
         return channel
 
     @staticmethod
+    async def get_all_channels(session: AsyncSession) -> List[Channel]:
+        """Get all channels."""
+        result = await session.execute(
+            select(Channel).order_by(Channel.username)
+        )
+        return list(result.scalars().all())
+
+    @staticmethod
     async def get_active_channels(session: AsyncSession) -> List[Channel]:
         """Get all active channels."""
         result = await session.execute(

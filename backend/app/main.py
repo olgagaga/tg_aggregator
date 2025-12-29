@@ -4,7 +4,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import health
-from app.api.v1 import admin, posts, tags, feeds, bookmarks, search
+from app.api.v1 import admin, posts, tags, feeds, bookmarks, search, channels, scrape
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.db.base import close_db, init_db
@@ -52,6 +52,8 @@ api_v1_router.include_router(tags.router)
 api_v1_router.include_router(feeds.router)
 api_v1_router.include_router(bookmarks.router)
 api_v1_router.include_router(search.router)
+api_v1_router.include_router(channels.router)
+api_v1_router.include_router(scrape.router)
 api_v1_router.include_router(admin.router)
 app.include_router(api_v1_router)
 

@@ -116,30 +116,16 @@ class TelegramScraper:
                 channel_id=channel_entity.id,
             )
 
-            # Determine the starting point
-            if channel.latest_message_id is None:
-                # Freshly added channel - fetch the latest message ID from Telegram
-                logger.info(
-                    f"Channel @{channel_username} is new, fetching latest message ID..."
-                )
-                latest_message = await self.client.get_messages(
-                    channel_entity,
-                    limit=1,
-                )
-                if latest_message and len(latest_message) > 0:
-                    current_tg_last_message_id = latest_message[0].id
-                    min_id = max(0, current_tg_last_message_id - limit)
-                    logger.info(
-                        f"Found latest message ID {current_tg_last_message_id}, "
-                        f"starting from {min_id} (fetching last {limit} messages)"
-                    )
-                else:
-                    # No messages in channel
-                    logger.warning(f"Channel @{channel_username} has no messages")
-                    return 0, 0
-            else:
-                # Existing channel - start from latest_message_id + 1
+            # Determine the starting point only from database values.
+            # For newly added channels, latest_message_id is pre-populated when the
+            # channel is created (based on a configurable history window), so the
+            # scraper can simply start from latest_message_id + 1.
+            if channel.latest_message_id is not None:
                 min_id = channel.latest_message_id + 1
+            else:
+                # Fallback for legacy channels created before this logic existed:
+                # start from the very beginning.
+                min_id = 0
 
             logger.info(
                 f"Scraping channel @{channel_username}, starting from message ID {min_id}"
