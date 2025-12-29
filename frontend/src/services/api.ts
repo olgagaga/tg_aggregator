@@ -389,4 +389,30 @@ export const channelsApi = {
   },
 };
 
+export const scrapeApi = {
+  scrapeAll: async (limitPerChannel: number = 2): Promise<{
+    status: string;
+    channels_scraped: number;
+    total_new_posts: number;
+    total_messages: number;
+    results: Record<string, { new_posts: number; total_messages: number }>;
+  }> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return {
+        status: 'success',
+        channels_scraped: 0,
+        total_new_posts: 0,
+        total_messages: 0,
+        results: {},
+      };
+    }
+
+    const response = await api.post(`/scrape/all`, null, {
+      params: { limit_per_channel: limitPerChannel },
+    });
+    return response.data;
+  },
+};
+
 export default api;

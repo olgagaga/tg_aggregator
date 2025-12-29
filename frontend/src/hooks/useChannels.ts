@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { channelsApi } from '@/services/api';
+import { channelsApi, scrapeApi } from '@/services/api';
 import { toast } from 'sonner';
 
 export function useChannels() {
@@ -75,6 +75,30 @@ export function useUpdateChannel(username: string) {
 
   return {
     updateChannel: mutation.mutate,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
+}
+
+export function useScrapeAll() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (limitPerChannel?: number) => scrapeApi.scrapeAll(limitPerChannel),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      toast.success(`Scraped ${data.channels_scraped} channels. Found ${data.total_new_posts} new posts.`);
+    },
+    onError: (error) => {
+      console.error('Failed to scrape channels:', error);
+      toast.error('Failed to scrape channels');
+    },
+  });
+
+  return {
+    scrapeAll: mutation.mutate,
     isLoading: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

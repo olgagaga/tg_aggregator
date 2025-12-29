@@ -12,9 +12,10 @@ import KeyboardShortcutsDialog from '@/components/ui/KeyboardShortcutsDialog';
 import { useFeeds } from '@/hooks/useFeeds';
 import { useSearch } from '@/hooks/useSearch';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useScrapeAll } from '@/hooks/useChannels';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Filter, Settings, X } from 'lucide-react';
+import { Filter, Settings, X, RefreshCw } from 'lucide-react';
 import PostCard from '@/components/posts/PostCard';
 import PostSkeleton from '@/components/posts/PostSkeleton';
 
@@ -34,6 +35,7 @@ export default function HomePage() {
   console.log('[DEBUG] HomePage: currentFeedId =', currentFeedId);
 
   const currentFeed = feeds.find((f) => f.id === currentFeedId);
+  const { scrapeAll, isLoading: isScraping } = useScrapeAll();
 
   // Search functionality
   const { data: searchResults, isLoading: isSearching } = useSearch(
@@ -130,6 +132,18 @@ export default function HomePage() {
               {/* Feed Selector */}
               <div className="space-y-3">
                 <FeedSelector onCreateFeed={() => setIsCreatingFeed(true)} />
+
+                {/* Scrape All Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => scrapeAll(10)}
+                  disabled={isScraping}
+                  className="w-full"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isScraping ? 'animate-spin' : ''}`} />
+                  {isScraping ? 'Scraping...' : 'Scrape All Channels'}
+                </Button>
 
                 {/* Edit Feed Button */}
                 {currentFeed && currentFeed.id !== 'all' && (
