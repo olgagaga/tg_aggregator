@@ -121,160 +121,205 @@ export default function HomePage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="container mx-auto px-4 py-6 max-w-3xl">
-        <div className="mb-6 space-y-4">
-          {/* Search Bar */}
-          <SearchBar
-            value={searchQuery}
-            onChange={setSearchQuery}
-            isLoading={isSearching}
-            placeholder="Search posts by content or channel..."
-          />
+      <div className="container mx-auto px-4 py-6">
+        {/* Two Column Layout */}
+        <div className="flex gap-6 items-start">
+          {/* Left Sidebar - Feed Selector and Tag Filter (Desktop only, hide in search mode) */}
+          {!isSearchMode && (
+            <aside className="hidden lg:block w-64 flex-shrink-0 sticky top-6 space-y-6">
+              {/* Feed Selector */}
+              <div className="space-y-3">
+                <FeedSelector onCreateFeed={() => setIsCreatingFeed(true)} />
 
-        {/* Search Results Header */}
-        {isSearchMode && (
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold">Search Results</h2>
-              {searchResults && (
-                <p className="text-sm text-muted-foreground">
-                  Found {searchResults.total} result{searchResults.total !== 1 ? 's' : ''} for "{searchQuery}"
-                </p>
-              )}
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearSearch}
-            >
-              <X className="h-4 w-4 mr-2" />
-              Clear Search
-            </Button>
-          </div>
-        )}
-
-        {/* Feed Selector and Filters (hide in search mode) */}
-        {!isSearchMode && (
-          <>
-            <div className="flex items-center justify-between gap-3">
-              <FeedSelector onCreateFeed={() => setIsCreatingFeed(true)} />
-
-              <div className="flex gap-2">
                 {/* Edit Feed Button */}
                 {currentFeed && currentFeed.id !== 'all' && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setIsEditingFeed(true)}
+                    className="w-full"
                   >
-                    <Settings className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Edit Feed</span>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Edit Feed
                   </Button>
                 )}
-
-                {/* Mobile: Filter button with sheet */}
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" className="md:hidden">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filters
-                      {selectedTags.length > 0 && (
-                        <span className="ml-2 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-                          {selectedTags.length}
-                        </span>
-                      )}
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="right" className="w-full sm:max-w-md">
-                    <SheetHeader>
-                      <SheetTitle>Filter Posts</SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-6">
-                      <TagFilter
-                        selectedTags={selectedTags}
-                        onTagToggle={handleTagToggle}
-                        onClearAll={handleClearAllTags}
-                      />
-                    </div>
-                  </SheetContent>
-                </Sheet>
               </div>
-            </div>
 
-            {/* Feed Tag Filters Display */}
-            {currentFeed && currentFeed.tag_filters.length > 0 && (
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">
-                  This feed shows posts with these tags:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {currentFeed.tag_filters.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+              {/* Feed Tag Filters Display */}
+              {currentFeed && currentFeed.tag_filters.length > 0 && (
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Feed filters:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentFeed.tag_filters.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Desktop: Inline filter (only show if not using feed filters) */}
-            {(!currentFeed || currentFeed.tag_filters.length === 0) && (
-              <div className="hidden md:block">
+              {/* Tag Filter (only show if not using feed filters) */}
+              {(!currentFeed || currentFeed.tag_filters.length === 0) && (
                 <TagFilter
                   selectedTags={selectedTags}
                   onTagToggle={handleTagToggle}
                   onClearAll={handleClearAllTags}
                 />
+              )}
+            </aside>
+          )}
+
+          {/* Main Content Area */}
+          <main className="flex-1 max-w-3xl mx-auto w-full">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                isLoading={isSearching}
+                placeholder="Search posts by content or channel..."
+              />
+            </div>
+
+            {/* Search Results Header */}
+            {isSearchMode && (
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold">Search Results</h2>
+                  {searchResults && (
+                    <p className="text-sm text-muted-foreground">
+                      Found {searchResults.total} result{searchResults.total !== 1 ? 's' : ''} for "{searchQuery}"
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearSearch}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Search
+                </Button>
               </div>
             )}
-          </>
-        )}
-      </div>
 
-      {/* Search Results or Regular Post List */}
-      {isSearchMode ? (
-        <div className="space-y-4">
-          {isSearching && (
-            <>
-              <PostSkeleton />
-              <PostSkeleton />
-              <PostSkeleton />
-            </>
-          )}
+            {/* Mobile Controls (show when sidebar is hidden) */}
+            {!isSearchMode && (
+              <div className="lg:hidden mb-6 space-y-4">
+                <div className="flex items-center justify-between gap-3">
+                  <FeedSelector onCreateFeed={() => setIsCreatingFeed(true)} />
 
-          {!isSearching && searchResults && searchResults.data.length > 0 && (
-            <>
-              {searchResults.data.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  onTagClick={handleTagToggle}
-                />
-              ))}
-            </>
-          )}
+                  <div className="flex gap-2">
+                    {/* Edit Feed Button */}
+                    {currentFeed && currentFeed.id !== 'all' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsEditingFeed(true)}
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    )}
 
-          {!isSearching && searchResults && searchResults.data.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No posts found matching "{searchQuery}"
-              </p>
-              <Button
-                variant="outline"
-                onClick={handleClearSearch}
-                className="mt-4"
-              >
-                Clear Search
-              </Button>
-            </div>
-          )}
+                    {/* Mobile: Filter button with sheet */}
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Filter className="h-4 w-4 mr-2" />
+                          Filters
+                          {selectedTags.length > 0 && (
+                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
+                              {selectedTags.length}
+                            </span>
+                          )}
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="right" className="w-full sm:max-w-md">
+                        <SheetHeader>
+                          <SheetTitle>Filter Posts</SheetTitle>
+                        </SheetHeader>
+                        <div className="mt-6">
+                          <TagFilter
+                            selectedTags={selectedTags}
+                            onTagToggle={handleTagToggle}
+                            onClearAll={handleClearAllTags}
+                          />
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  </div>
+                </div>
+
+                {/* Feed Tag Filters Display */}
+                {currentFeed && currentFeed.tag_filters.length > 0 && (
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      This feed shows posts with these tags:
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {currentFeed.tag_filters.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Search Results or Regular Post List */}
+            {isSearchMode ? (
+              <div className="space-y-4">
+                {isSearching && (
+                  <>
+                    <PostSkeleton />
+                    <PostSkeleton />
+                    <PostSkeleton />
+                  </>
+                )}
+
+                {!isSearching && searchResults && searchResults.data.length > 0 && (
+                  <>
+                    {searchResults.data.map((post) => (
+                      <PostCard
+                        key={post.id}
+                        post={post}
+                        onTagClick={handleTagToggle}
+                      />
+                    ))}
+                  </>
+                )}
+
+                {!isSearching && searchResults && searchResults.data.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">
+                      No posts found matching "{searchQuery}"
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={handleClearSearch}
+                      className="mt-4"
+                    >
+                      Clear Search
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <PostList tags={activeTags} onTagClick={handleTagToggle} />
+            )}
+          </main>
         </div>
-      ) : (
-        <PostList tags={activeTags} onTagClick={handleTagToggle} />
-      )}
 
         {/* Feed Editor Modals */}
         <FeedEditor
