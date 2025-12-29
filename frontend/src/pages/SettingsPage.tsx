@@ -1,4 +1,5 @@
 import FeedList from '@/components/feeds/FeedList';
+import ChannelList from '@/components/channels/ChannelList';
 
 export default function SettingsPage() {
   return (
@@ -6,6 +7,12 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
       <div className="space-y-8">
+        {/* Channel Management Section */}
+        <section>
+          <h2 className="text-lg font-semibold mb-4">Channel Management</h2>
+          <ChannelList />
+        </section>
+
         {/* Feed Management Section */}
         <section>
           <h2 className="text-lg font-semibold mb-4">Feed Management</h2>

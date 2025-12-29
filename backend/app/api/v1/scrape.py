@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 @router.post("/all", response_model=Dict)
 async def scrape_all_channels(
     limit_per_channel: int = Query(
-        100,
+        2,
         ge=1,
         le=1000,
         description="Maximum number of messages to fetch per channel",
@@ -66,7 +66,7 @@ async def scrape_all_channels(
 async def scrape_channel(
     channel_username: str,
     limit: int = Query(
-        100,
+        2,
         ge=1,
         le=1000,
         description="Maximum number of messages to fetch",

@@ -30,6 +30,17 @@ export interface PaginatedResponse<T> {
   has_more: boolean;
 }
 
+export interface Channel {
+  id: number;
+  username: string;
+  name: string;
+  channel_id?: number;
+  latest_message_id?: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

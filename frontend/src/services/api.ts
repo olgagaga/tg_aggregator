@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Post, Feed, Tag, PaginatedResponse } from '@/types';
+import type { Post, Feed, Tag, PaginatedResponse, Channel } from '@/types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
@@ -318,6 +318,51 @@ export const bookmarksApi = {
     }
 
     const response = await api.get<PaginatedResponse<Post>>('/bookmarks', { params });
+    return response.data;
+  },
+};
+
+export const channelsApi = {
+  getChannels: async (): Promise<Channel[]> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return [];
+    }
+
+    const response = await api.get<Channel[]>('/channels');
+    return response.data;
+  },
+
+  addChannel: async (data: { username: string; name?: string; is_active?: boolean }): Promise<Channel> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      throw new Error('Mock mode: Channel management not available');
+    }
+
+    const response = await api.post<Channel>('/channels', {
+      username: data.username,
+      name: data.name || data.username,
+      is_active: data.is_active ?? true,
+    });
+    return response.data;
+  },
+
+  removeChannel: async (username: string): Promise<void> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      throw new Error('Mock mode: Channel management not available');
+    }
+
+    await api.delete(`/channels/${username}`);
+  },
+
+  updateChannel: async (username: string, data: { name?: string; is_active?: boolean }): Promise<Channel> => {
+    if (MOCK_DATA_ENABLED) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      throw new Error('Mock mode: Channel management not available');
+    }
+
+    const response = await api.patch<Channel>(`/channels/${username}`, data);
     return response.data;
   },
 };

@@ -753,15 +753,15 @@ class PostTag(SQLModel, table=True):
 5. **Run database migrations:**
    ```bash
    # Generate initial migration (if not exists)
-   alembic revision --autogenerate -m "Initial migration"
+   uv run alembic revision --autogenerate -m "Initial migration"
    
    # Apply migrations
-   alembic upgrade head
+   uv run alembic upgrade head
    ```
 
 6. **Run the application:**
    ```bash
-   python main.py
+   uv run python main.py
    ```
    
    Or using uvicorn directly:
