@@ -1,4 +1,32 @@
-# React + TypeScript + Vite
+# Telegram ML/DL Channel Aggregator - Frontend
+
+React + TypeScript + Vite frontend for aggregating and browsing ML/DL content from Telegram channels.
+
+## TODO
+
+### Backend API Endpoints Required
+
+- [ ] **Secure API Key Management Endpoint** (`POST /api/settings/keys`)
+  - Purpose: Allow users to securely update API keys (OpenAI, Telegram) from the frontend
+  - Request body:
+    ```json
+    {
+      "openai_api_key": "sk-...",
+      "telegram_api_id": "12345678",
+      "telegram_api_hash": "abcdef1234567890..."
+    }
+    ```
+  - Security considerations:
+    - Implement proper authentication/authorization
+    - Store keys encrypted in the backend
+    - Consider using environment-specific key storage (e.g., AWS Secrets Manager, HashiCorp Vault)
+    - Validate API keys before storing
+    - Return success/failure without exposing the actual keys
+  - Related frontend component: `KeyManagementDialog.tsx`
+
+---
+
+## About
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
