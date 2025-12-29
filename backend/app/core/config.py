@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     environment: Literal["development", "staging", "production"] = "development"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     api_v1_prefix: str = "/api/v1"
+    api_prefix: str = "/api"  # Main API prefix for frontend compatibility
 
     # Scraper Settings
     # How many recent messages to initially include when adding a new channel.

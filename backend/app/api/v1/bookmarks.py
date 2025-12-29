@@ -11,37 +11,57 @@ from app.services.bookmark_service import BookmarkService
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 
 
-@router.post("/{post_id}", response_model=dict)
-async def toggle_bookmark(
+@router.post("/{post_id}", status_code=204)
+async def add_bookmark(
     post_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+):
     """
-    Toggle bookmark status for a post.
+    Add a post to bookmarks.
 
-    If the post is not bookmarked, it will be bookmarked.
-    If it is already bookmarked, it will be unbookmarked.
+    Frontend expects POST to add bookmark.
     """
-    is_bookmarked, bookmark = await BookmarkService.toggle(session, post_id)
-    return {
-        "post_id": post_id,
-        "is_bookmarked": is_bookmarked,
-        "bookmark": BookmarkSchema.model_validate(bookmark).model_dump() if bookmark else None,
-    }
+    bookmark = await BookmarkService.create(session, post_id)
+    if not bookmark:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+
+@router.delete("/{post_id}", status_code=204)
+async def remove_bookmark(
+    post_id: str,
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    Remove a post from bookmarks.
+
+    Frontend expects DELETE to remove bookmark.
+    """
+    success = await BookmarkService.delete(session, post_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Bookmark not found")
 
 
 @router.get("", response_model=dict)
 async def get_bookmarks(
-    skip: int = Query(0, ge=0, description="Number of bookmarks to skip"),
+    offset: int = Query(0, ge=0, alias="skip", description="Number of bookmarks to skip"),
     limit: int = Query(20, ge=1, le=100, description="Number of bookmarks to return"),
     session: AsyncSession = Depends(get_session),
 ) -> dict:
     """Get all bookmarked posts with pagination."""
-    bookmarks, total = await BookmarkService.get_all(session, skip=skip, limit=limit)
+    from app.schemas.post import PostSchema
+
+    bookmarks, total = await BookmarkService.get_all(session, skip=offset, limit=limit)
+
+    # Convert bookmarks to post format
+    posts_data = []
+    for bm in bookmarks:
+        post_dict = PostSchema.model_validate(bm.post).model_dump()
+        post_dict["is_bookmarked"] = True
+        posts_data.append(post_dict)
+
     return {
-        "items": [BookmarkSchema.model_validate(bm).model_dump() for bm in bookmarks],
+        "data": posts_data,
         "total": total,
-        "skip": skip,
-        "limit": limit,
+        "has_more": (offset + limit) < total,
     }
 

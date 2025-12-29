@@ -11,23 +11,25 @@ from app.services.tag_service import TagService
 router = APIRouter(prefix="/tags", tags=["tags"])
 
 
-@router.get("", response_model=List[dict])
+@router.get("", response_model=dict)
 async def get_tags(
     session: AsyncSession = Depends(get_session),
-) -> List[dict]:
+) -> dict:
     """
     Get all tags with usage counts.
 
-    Returns a list of tags with their usage statistics.
+    Returns tags with their usage statistics in frontend-compatible format.
     """
     tags_with_counts = await TagService.get_all_with_counts(session)
-    return [
+    tags_list = [
         {
-            **TagSchema.model_validate(tag).model_dump(),
-            "usage_count": count,
+            "name": tag.name,
+            "count": count,
+            "source": tag.author_type.value,  # "llm" or "human"
         }
         for tag, count in tags_with_counts
     ]
+    return {"tags": tags_list}
 
 
 @router.post("", response_model=TagSchema, status_code=201)

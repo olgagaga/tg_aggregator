@@ -44,3 +44,8 @@ class PostUpdate(BaseModel):
     content: Optional[str] = None
     media_urls: Optional[List[str]] = None
 
+
+class PostTagsUpdate(BaseModel):
+    """Schema for updating post tags."""
+
+    tags: List[dict] = Field(..., description="List of tags with name and author_type")

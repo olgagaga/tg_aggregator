@@ -8,10 +8,10 @@ from pydantic import BaseModel, Field
 class FeedSchema(BaseModel):
     """Feed schema for API responses."""
 
-    id: int
+    id: str | int  # Can be string "all" or int for database feeds
     name: str
     tag_filters: List[str] = Field(default_factory=list)
-    created_at: datetime | None = None
+    created_at: str | datetime | None = None  # ISO string for frontend compatibility
 
     class Config:
         from_attributes = True

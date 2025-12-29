@@ -15,7 +15,7 @@ router = APIRouter(prefix="/search", tags=["search"])
 @router.get("", response_model=dict)
 async def search_posts(
     q: str = Query(..., description="Search query"),
-    skip: int = Query(0, ge=0, description="Number of posts to skip"),
+    offset: int = Query(0, ge=0, alias="skip", description="Number of posts to skip"),
     limit: int = Query(20, ge=1, le=100, description="Number of posts to return"),
     session: AsyncSession = Depends(get_session),
 ) -> dict:
@@ -30,7 +30,7 @@ async def search_posts(
 
     posts_list, total = await PostService.get_all(
         session=session,
-        skip=skip,
+        skip=offset,
         limit=limit,
         search_query=q.strip(),
     )
@@ -44,10 +44,8 @@ async def search_posts(
         posts_with_bookmarks.append(post_dict)
 
     return {
-        "items": posts_with_bookmarks,
+        "data": posts_with_bookmarks,
         "total": total,
-        "skip": skip,
-        "limit": limit,
-        "query": q,
+        "has_more": (offset + limit) < total,
     }
 

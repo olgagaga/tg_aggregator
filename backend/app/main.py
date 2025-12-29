@@ -45,7 +45,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router)
 
-# Include API v1 routers
+# Include API v1 routers (for backward compatibility)
 api_v1_router = APIRouter(prefix=settings.api_v1_prefix)
 api_v1_router.include_router(posts.router)
 api_v1_router.include_router(tags.router)
@@ -56,6 +56,18 @@ api_v1_router.include_router(channels.router)
 api_v1_router.include_router(scrape.router)
 api_v1_router.include_router(admin.router)
 app.include_router(api_v1_router)
+
+# Include main API router (for frontend compatibility - expects /api)
+api_router = APIRouter(prefix=settings.api_prefix)
+api_router.include_router(posts.router)
+api_router.include_router(tags.router)
+api_router.include_router(feeds.router)
+api_router.include_router(bookmarks.router)
+api_router.include_router(search.router)
+api_router.include_router(channels.router)
+api_router.include_router(scrape.router)
+api_router.include_router(admin.router)
+app.include_router(api_router)
 
 
 @app.get("/")
